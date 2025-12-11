@@ -209,7 +209,7 @@ composer test
 
 ## Enterprise Support
 
-Managing issues across 100+ repositories? Contact [jordan.woop@partridge.rocks](mailto:jordan.woop@partridge.rocks) for custom automation solutions.
+Managing issues across 100+ repositories? Contact [jordan@partridge.rocks](mailto:jordan@partridge.rocks) for custom automation solutions.
 
 ## License
 
