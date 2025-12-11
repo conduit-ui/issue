@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use ConduitUI\GithubIssues\Data\Label;
+use ConduitUI\Issue\Data\Label;
 
 test('can create label from array', function () {
     $data = [

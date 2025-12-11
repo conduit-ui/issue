@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace ConduitUI\GithubIssues\Facades;
+namespace ConduitUI\Issue\Facades;
 
-use ConduitUI\GithubIssues\Services\IssuesService;
+use ConduitUI\Issue\Services\IssuesService;
 use Illuminate\Support\Facades\Facade;
 
 /**

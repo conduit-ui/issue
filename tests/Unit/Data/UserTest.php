@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use ConduitUI\GithubIssues\Data\User;
+use ConduitUI\Issue\Data\User;
 
 test('can create user from array', function () {
     $data = [

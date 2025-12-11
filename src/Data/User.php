@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ConduitUI\GithubIssues\Data;
+namespace ConduitUI\Issue\Data;
 
 readonly class User
 {

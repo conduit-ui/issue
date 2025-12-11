@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ConduitUI\GithubIssues;
+namespace ConduitUI\Issue;
 
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;

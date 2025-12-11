@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace ConduitUI\GithubIssues\Tests;
+namespace ConduitUI\Issue\Tests;
 
-use ConduitUI\GithubIssues\GithubIssuesServiceProvider;
+use ConduitUI\Issue\GithubIssuesServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra

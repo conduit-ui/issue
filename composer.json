@@ -1,6 +1,6 @@
 {
-    "name": "conduit-ui/github-issues",
-    "description": "GitHub issues management package built on the connector library",
+    "name": "conduit-ui/issue",
+    "description": "GitHub issue management for agents",
     "keywords": [
         "github",
         "issues",
@@ -9,7 +9,7 @@
         "laravel",
         "saloon"
     ],
-    "homepage": "https://github.com/conduit-ui/github-issues",
+    "homepage": "https://github.com/conduit-ui/issue",
     "license": "MIT",
     "authors": [
         {
@@ -40,12 +40,12 @@
     },
     "autoload": {
         "psr-4": {
-            "ConduitUI\\GithubIssues\\": "src/"
+            "ConduitUI\\Issue\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "ConduitUI\\GithubIssues\\Tests\\": "tests/",
+            "ConduitUI\\Issue\\Tests\\": "tests/",
             "Workbench\\App\\": "workbench/app/"
         }
     },
@@ -77,10 +77,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "ConduitUI\\GithubIssues\\GithubIssuesServiceProvider"
+                "ConduitUI\\Issue\\GithubIssuesServiceProvider"
             ],
             "aliases": {
-                "GithubIssues": "ConduitUI\\GithubIssues\\Facades\\GithubIssues"
+                "GithubIssues": "ConduitUI\\Issue\\Facades\\GithubIssues"
             }
         }
     },

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace ConduitUI\GithubIssues\Traits;
+namespace ConduitUI\Issue\Traits;
 
-use ConduitUI\GithubIssues\Data\Issue;
+use ConduitUI\Issue\Data\Issue;
 
 trait ManagesIssueAssignees
 {

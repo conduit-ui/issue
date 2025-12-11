@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Examples;
 
 use ConduitUi\GitHubConnector\Connector;
-use ConduitUI\GithubIssues\Contracts\ManagesIssueAssigneesInterface;
-use ConduitUI\GithubIssues\Contracts\ManagesIssueLabelsInterface;
-use ConduitUI\GithubIssues\Contracts\ManagesIssuesInterface;
-use ConduitUI\GithubIssues\Traits\ManagesIssueAssignees;
-use ConduitUI\GithubIssues\Traits\ManagesIssueLabels;
-use ConduitUI\GithubIssues\Traits\ManagesIssues;
+use ConduitUI\Issue\Contracts\ManagesIssueAssigneesInterface;
+use ConduitUI\Issue\Contracts\ManagesIssueLabelsInterface;
+use ConduitUI\Issue\Contracts\ManagesIssuesInterface;
+use ConduitUI\Issue\Traits\ManagesIssueAssignees;
+use ConduitUI\Issue\Traits\ManagesIssueLabels;
+use ConduitUI\Issue\Traits\ManagesIssues;
 
 /**
  * Example composite service that combines issue management with other GitHub functionality

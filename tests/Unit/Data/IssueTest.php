@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use ConduitUI\GithubIssues\Data\Issue;
-use ConduitUI\GithubIssues\Data\Label;
-use ConduitUI\GithubIssues\Data\User;
+use ConduitUI\Issue\Data\Issue;
+use ConduitUI\Issue\Data\Label;
+use ConduitUI\Issue\Data\User;
 
 test('can create issue from array', function () {
     $data = [

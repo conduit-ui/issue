@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace ConduitUI\GithubIssues\Contracts;
+namespace ConduitUI\Issue\Contracts;
 
-use ConduitUI\GithubIssues\Data\Issue;
+use ConduitUI\Issue\Data\Issue;
 
 interface ManagesIssueAssigneesInterface
 {
