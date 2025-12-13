@@ -10,7 +10,7 @@ use Illuminate\Support\Collection;
 interface ManagesIssuesInterface
 {
     /**
-     * @return \Illuminate\Support\Collection<int, \ConduitUI\GithubIssues\Data\Issue>
+     * @return Collection<int, Issue>
      */
     public function listIssues(string $owner, string $repo, array $filters = []): Collection;
 

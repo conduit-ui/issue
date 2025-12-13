@@ -31,6 +31,7 @@ class IssueQuery
     public function state(string $state): self
     {
         $this->filters['state'] = $state;
+
         return $this;
     }
 
@@ -68,6 +69,7 @@ class IssueQuery
     public function labels(array $labels): self
     {
         $this->filters['labels'] = implode(',', $labels);
+
         return $this;
     }
 
@@ -105,6 +107,7 @@ class IssueQuery
     public function assignee(string $username): self
     {
         $this->filters['assignee'] = $username;
+
         return $this;
     }
 
@@ -142,6 +145,7 @@ class IssueQuery
     public function creator(string $username): self
     {
         $this->filters['creator'] = $username;
+
         return $this;
     }
 
@@ -171,6 +175,7 @@ class IssueQuery
     public function mentioned(string $username): self
     {
         $this->filters['mentioned'] = $username;
+
         return $this;
     }
 
@@ -186,6 +191,7 @@ class IssueQuery
         $this->filters['since'] = $date instanceof \DateTimeInterface
             ? $date->format('c')
             : $date;
+
         return $this;
     }
 
@@ -216,6 +222,7 @@ class IssueQuery
     {
         $this->filters['sort'] = $field;
         $this->filters['direction'] = $direction;
+
         return $this;
     }
 
@@ -261,6 +268,7 @@ class IssueQuery
     public function perPage(int $count): self
     {
         $this->filters['per_page'] = min($count, 100); // GitHub max is 100
+
         return $this;
     }
 
@@ -270,6 +278,7 @@ class IssueQuery
     public function page(int $page): self
     {
         $this->filters['page'] = $page;
+
         return $this;
     }
 
@@ -296,6 +305,7 @@ class IssueQuery
     public function milestone(int|string $milestone): self
     {
         $this->filters['milestone'] = $milestone;
+
         return $this;
     }
 
@@ -313,9 +323,12 @@ class IssueQuery
 
     /**
      * Execute the query and get results.
+     *
+     * @return Collection<int, Issue>
      */
     public function get(): Collection
     {
+        /** @var Collection<int, Issue> */
         return $this->context->service()->listIssues(
             $this->context->owner,
             $this->context->repo,
@@ -328,6 +341,7 @@ class IssueQuery
      */
     public function first(): ?Issue
     {
+        /** @var Issue|null */
         return $this->take(1)->get()->first();
     }
 
@@ -349,6 +363,8 @@ class IssueQuery
 
     /**
      * Get just the issue numbers.
+     *
+     * @return Collection<int, mixed>
      */
     public function pluck(string $field = 'number'): Collection
     {
@@ -357,9 +373,12 @@ class IssueQuery
 
     /**
      * Get just issue numbers.
+     *
+     * @return Collection<int, int>
      */
     public function numbers(): Collection
     {
+        /** @var Collection<int, int> */
         return $this->pluck('number');
     }
 
@@ -369,36 +388,45 @@ class IssueQuery
 
     /**
      * Close all matching issues.
+     *
+     * @return Collection<int, Issue>
      */
     public function closeAll(): Collection
     {
         return $this->get()->map(
-            fn (Issue $issue) => $this->context->close($issue->number)
+            fn (Issue $issue): Issue => $this->context->close($issue->number)
         );
     }
 
     /**
      * Add labels to all matching issues.
+     *
+     * @param  array<string>  $labels
+     * @return Collection<int, Issue>
      */
     public function addLabelsToAll(array $labels): Collection
     {
         return $this->get()->map(
-            fn (Issue $issue) => $this->context->addLabels($issue->number, $labels)
+            fn (Issue $issue): Issue => $this->context->addLabels($issue->number, $labels)
         );
     }
 
     /**
      * Assign all matching issues to user(s).
+     *
+     * @return Collection<int, Issue>
      */
     public function assignAll(string|array $assignees): Collection
     {
         return $this->get()->map(
-            fn (Issue $issue) => $this->context->assign($issue->number, $assignees)
+            fn (Issue $issue): Issue => $this->context->assign($issue->number, $assignees)
         );
     }
 
     /**
      * Apply a callback to each matching issue.
+     *
+     * @return Collection<int, Issue>
      */
     public function each(callable $callback): Collection
     {

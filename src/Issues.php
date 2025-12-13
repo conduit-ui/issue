@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace ConduitUI\Issue;
 
-use ConduitUI\Issue\Data\Issue;
 use ConduitUI\Issue\Data\Comment;
+use ConduitUI\Issue\Data\Issue;
 use Illuminate\Support\Collection;
 
 /**
@@ -24,7 +24,8 @@ use Illuminate\Support\Collection;
 class Issues
 {
     private static ?IssueContext $context = null;
-    private static ?string $cacheKey = 'github.issues.repo';
+
+    private const CACHE_KEY = 'github.issues.repo';
 
     /**
      * Set or get the current repository context.
@@ -35,29 +36,29 @@ class Issues
     public static function repo(?string $identifier = null): IssueContext
     {
         if ($identifier !== null) {
-            static::$context = IssueContext::from($identifier);
+            self::$context = IssueContext::from($identifier);
 
             // Also cache it for persistence across requests if cache is available
             if (function_exists('cache')) {
-                cache()->put(static::$cacheKey, $identifier);
+                cache()->put(self::CACHE_KEY, $identifier);
             }
         }
 
         // Try to restore from cache if no context set
-        if (static::$context === null && function_exists('cache')) {
-            $cached = cache()->get(static::$cacheKey);
-            if ($cached) {
-                static::$context = IssueContext::from($cached);
+        if (self::$context === null && function_exists('cache')) {
+            $cached = cache()->get(self::CACHE_KEY);
+            if (is_string($cached)) {
+                self::$context = IssueContext::from($cached);
             }
         }
 
-        if (static::$context === null) {
+        if (self::$context === null) {
             throw new \RuntimeException(
                 'No repository context set. Call Issues::repo("owner/repo") first.'
             );
         }
 
-        return static::$context;
+        return self::$context;
     }
 
     /**
@@ -65,10 +66,10 @@ class Issues
      */
     public static function forget(): void
     {
-        static::$context = null;
+        self::$context = null;
 
         if (function_exists('cache')) {
-            cache()->forget(static::$cacheKey);
+            cache()->forget(self::CACHE_KEY);
         }
     }
 
@@ -77,12 +78,12 @@ class Issues
      */
     public static function hasContext(): bool
     {
-        if (static::$context !== null) {
+        if (self::$context !== null) {
             return true;
         }
 
         if (function_exists('cache')) {
-            return cache()->has(static::$cacheKey);
+            return cache()->has(self::CACHE_KEY);
         }
 
         return false;
@@ -166,6 +167,9 @@ class Issues
 
     /**
      * Close multiple issues.
+     *
+     * @param  array<int>  $numbers
+     * @return Collection<int, Issue>
      */
     public static function closeMany(array $numbers): Collection
     {

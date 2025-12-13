@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace ConduitUI\Issue;
 
-use ConduitUI\Issue\Data\Issue;
 use ConduitUI\Issue\Data\Comment;
+use ConduitUI\Issue\Data\Issue;
 use ConduitUI\Issue\Services\IssuesService;
 use Illuminate\Support\Collection;
 
@@ -34,7 +34,7 @@ class IssueContext
      */
     public static function from(string $identifier): self
     {
-        if (!str_contains($identifier, '/')) {
+        if (! str_contains($identifier, '/')) {
             throw new \InvalidArgumentException(
                 "Repository identifier must be in 'owner/repo' format, got: {$identifier}"
             );
@@ -112,10 +112,13 @@ class IssueContext
 
     /**
      * Close multiple issues at once.
+     *
+     * @param  array<int>  $numbers
+     * @return Collection<int, Issue>
      */
     public function closeMany(array $numbers): Collection
     {
-        return collect($numbers)->map(fn (int $n) => $this->close($n));
+        return collect($numbers)->map(fn (int $n): Issue => $this->close($n));
     }
 
     /**
@@ -164,6 +167,7 @@ class IssueContext
     public function assign(int $number, string|array $assignees): Issue
     {
         $assignees = is_array($assignees) ? $assignees : [$assignees];
+
         return $this->service->addAssignees($this->owner, $this->repo, $number, $assignees);
     }
 
@@ -173,6 +177,7 @@ class IssueContext
     public function unassign(int $number, string|array $assignees): Issue
     {
         $assignees = is_array($assignees) ? $assignees : [$assignees];
+
         return $this->service->removeAssignees($this->owner, $this->repo, $number, $assignees);
     }
 
@@ -202,17 +207,17 @@ class IssueContext
             'body' => $changes['body'] ?? null,
         ]);
 
-        if (!empty($fieldUpdates)) {
+        if (! empty($fieldUpdates)) {
             $issue = $this->service->updateIssue($this->owner, $this->repo, $number, $fieldUpdates);
         }
 
         // Handle label additions
-        if (!empty($changes['add_labels'])) {
+        if (! empty($changes['add_labels'])) {
             $issue = $this->addLabels($number, $changes['add_labels']);
         }
 
         // Handle label removals
-        if (!empty($changes['remove_labels'])) {
+        if (! empty($changes['remove_labels'])) {
             $issue = $this->removeLabels($number, $changes['remove_labels']);
         }
 
@@ -222,12 +227,12 @@ class IssueContext
         }
 
         // Handle assignee additions
-        if (!empty($changes['add_assignees'])) {
+        if (! empty($changes['add_assignees'])) {
             $issue = $this->assign($number, $changes['add_assignees']);
         }
 
         // Handle assignee removals
-        if (!empty($changes['remove_assignees'])) {
+        if (! empty($changes['remove_assignees'])) {
             $issue = $this->unassign($number, $changes['remove_assignees']);
         }
 
@@ -259,8 +264,11 @@ class IssueContext
             $connector->get("/repos/{$this->owner}/{$this->repo}/issues/{$number}/comments")
         );
 
-        return collect($response->json())
-            ->map(fn (array $data) => Comment::fromArray($data));
+        /** @var array<int, array<string, mixed>> $data */
+        $data = $response->json();
+
+        return collect($data)
+            ->map(fn (array $item): Comment => Comment::fromArray($item));
     }
 
     /**
@@ -275,6 +283,9 @@ class IssueContext
             ])
         );
 
-        return Comment::fromArray($response->json());
+        /** @var array<string, mixed> $data */
+        $data = $response->json();
+
+        return Comment::fromArray($data);
     }
 }
