@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace ConduitUI\Issue\Traits;
 
 use ConduitUI\Issue\Data\Issue;
+use ConduitUI\Issue\Requests\Assignees\AddAssigneesRequest;
+use ConduitUI\Issue\Requests\Assignees\RemoveAssigneesRequest;
 
 trait ManagesIssueAssignees
 {
     public function addAssignees(string $owner, string $repo, int $issueNumber, array $assignees): Issue
     {
         $response = $this->connector->send(
-            $this->connector->post("/repos/{$owner}/{$repo}/issues/{$issueNumber}/assignees", [
-                'assignees' => $assignees,
-            ])
+            new AddAssigneesRequest($owner, $repo, $issueNumber, $assignees)
         );
 
         return Issue::fromArray($response->json());
@@ -22,9 +22,7 @@ trait ManagesIssueAssignees
     public function removeAssignees(string $owner, string $repo, int $issueNumber, array $assignees): Issue
     {
         $response = $this->connector->send(
-            $this->connector->delete("/repos/{$owner}/{$repo}/issues/{$issueNumber}/assignees", [
-                'assignees' => $assignees,
-            ])
+            new RemoveAssigneesRequest($owner, $repo, $issueNumber, $assignees)
         );
 
         return Issue::fromArray($response->json());
