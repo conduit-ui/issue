@@ -19,4 +19,12 @@ class IssuesService implements IssuesServiceInterface
     public function __construct(
         private readonly Connector $connector
     ) {}
+
+    /**
+     * Get the underlying connector for advanced operations.
+     */
+    public function connector(): Connector
+    {
+        return $this->connector;
+    }
 }
