@@ -4,6 +4,7 @@ Stop manually triaging issues. Start automating the repetitive work that keeps y
 
 Bulk label, assign, close, and route issues across repositories with clean PHP code. Built for teams managing hundreds of issues across multiple projects.
 
+[![Sentinel Certified](https://img.shields.io/github/actions/workflow/status/conduit-ui/issue/gate.yml?label=Sentinel%20Certified&style=flat-square)](https://github.com/conduit-ui/issue/actions/workflows/gate.yml)
 [![Latest Version](https://img.shields.io/packagist/v/conduit-ui/issue.svg?style=flat-square)](https://packagist.org/packages/conduit-ui/issue)
 [![MIT License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 [![Total Downloads](https://img.shields.io/packagist/dt/conduit-ui/issue.svg?style=flat-square)](https://packagist.org/packages/conduit-ui/issue)
