@@ -7,6 +7,7 @@ Bulk label, assign, close, and route issues across repositories with clean PHP c
 [![Latest Version](https://img.shields.io/packagist/v/conduit-ui/issue.svg?style=flat-square)](https://packagist.org/packages/conduit-ui/issue)
 [![MIT License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 [![Total Downloads](https://img.shields.io/packagist/dt/conduit-ui/issue.svg?style=flat-square)](https://packagist.org/packages/conduit-ui/issue)
+  [![🏆 Sentinel Certified](https://img.shields.io/github/actions/workflow/status/OWNER/REPO/gate.yml?label=🏆%20Sentinel%20Certified&style=flat-square)](https://github.com/OWNER/REPO/actions/workflows/gate.yml)
 
 ## Installation
 
