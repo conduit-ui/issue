@@ -5,15 +5,17 @@ declare(strict_types=1);
 namespace ConduitUI\Issue\Traits;
 
 use ConduitUI\Issue\Data\Issue;
+use ConduitUI\Issue\Requests\Labels\AddLabelsRequest;
+use ConduitUI\Issue\Requests\Labels\RemoveAllLabelsRequest;
+use ConduitUI\Issue\Requests\Labels\RemoveLabelRequest;
+use ConduitUI\Issue\Requests\Labels\ReplaceAllLabelsRequest;
 
 trait ManagesIssueLabels
 {
     public function addLabels(string $owner, string $repo, int $issueNumber, array $labels): Issue
     {
         $response = $this->connector->send(
-            $this->connector->post("/repos/{$owner}/{$repo}/issues/{$issueNumber}/labels", [
-                'labels' => $labels,
-            ])
+            new AddLabelsRequest($owner, $repo, $issueNumber, $labels)
         );
 
         return Issue::fromArray($response->json());
@@ -23,7 +25,7 @@ trait ManagesIssueLabels
     {
         foreach ($labels as $label) {
             $this->connector->send(
-                $this->connector->delete("/repos/{$owner}/{$repo}/issues/{$issueNumber}/labels/{$label}")
+                new RemoveLabelRequest($owner, $repo, $issueNumber, $label)
             );
         }
 
@@ -43,9 +45,7 @@ trait ManagesIssueLabels
     public function replaceAllLabels(string $owner, string $repo, int $issueNumber, array $labels): Issue
     {
         $response = $this->connector->send(
-            $this->connector->put("/repos/{$owner}/{$repo}/issues/{$issueNumber}/labels", [
-                'labels' => $labels,
-            ])
+            new ReplaceAllLabelsRequest($owner, $repo, $issueNumber, $labels)
         );
 
         return Issue::fromArray($response->json());
@@ -54,7 +54,7 @@ trait ManagesIssueLabels
     public function removeAllLabels(string $owner, string $repo, int $issueNumber): Issue
     {
         $this->connector->send(
-            $this->connector->delete("/repos/{$owner}/{$repo}/issues/{$issueNumber}/labels")
+            new RemoveAllLabelsRequest($owner, $repo, $issueNumber)
         );
 
         return $this->getIssue($owner, $repo, $issueNumber);
