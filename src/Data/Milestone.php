@@ -6,26 +6,22 @@ namespace ConduitUI\Issue\Data;
 
 use DateTime;
 
-readonly class Issue
+readonly class Milestone
 {
     public function __construct(
         public int $id,
         public int $number,
         public string $title,
-        public ?string $body,
+        public ?string $description,
         public string $state,
-        public bool $locked,
-        public array $assignees,
-        public array $labels,
-        public ?Milestone $milestone,
-        public int $comments,
+        public int $openIssues,
+        public int $closedIssues,
         public DateTime $createdAt,
         public DateTime $updatedAt,
         public ?DateTime $closedAt,
+        public ?DateTime $dueOn,
         public string $htmlUrl,
-        public User $user,
-        public ?User $assignee = null,
-        public ?User $closedBy = null,
+        public User $creator,
     ) {}
 
     public static function fromArray(array $data): self
@@ -34,20 +30,16 @@ readonly class Issue
             id: $data['id'],
             number: $data['number'],
             title: $data['title'],
-            body: $data['body'],
+            description: $data['description'] ?? null,
             state: $data['state'],
-            locked: $data['locked'],
-            assignees: array_map(fn ($assignee) => User::fromArray($assignee), $data['assignees'] ?? []),
-            labels: array_map(fn ($label) => Label::fromArray($label), $data['labels'] ?? []),
-            milestone: $data['milestone'] ? Milestone::fromArray($data['milestone']) : null,
-            comments: $data['comments'],
+            openIssues: $data['open_issues'],
+            closedIssues: $data['closed_issues'],
             createdAt: new DateTime($data['created_at']),
             updatedAt: new DateTime($data['updated_at']),
             closedAt: $data['closed_at'] ? new DateTime($data['closed_at']) : null,
+            dueOn: $data['due_on'] ? new DateTime($data['due_on']) : null,
             htmlUrl: $data['html_url'],
-            user: User::fromArray($data['user']),
-            assignee: $data['assignee'] ? User::fromArray($data['assignee']) : null,
-            closedBy: $data['closed_by'] ? User::fromArray($data['closed_by']) : null,
+            creator: User::fromArray($data['creator']),
         );
     }
 
@@ -57,20 +49,16 @@ readonly class Issue
             'id' => $this->id,
             'number' => $this->number,
             'title' => $this->title,
-            'body' => $this->body,
+            'description' => $this->description,
             'state' => $this->state,
-            'locked' => $this->locked,
-            'assignees' => array_map(fn (User $assignee) => $assignee->toArray(), $this->assignees),
-            'labels' => array_map(fn (Label $label) => $label->toArray(), $this->labels),
-            'milestone' => $this->milestone?->toArray(),
-            'comments' => $this->comments,
+            'open_issues' => $this->openIssues,
+            'closed_issues' => $this->closedIssues,
             'created_at' => $this->createdAt->format('c'),
             'updated_at' => $this->updatedAt->format('c'),
             'closed_at' => $this->closedAt?->format('c'),
+            'due_on' => $this->dueOn?->format('c'),
             'html_url' => $this->htmlUrl,
-            'user' => $this->user->toArray(),
-            'assignee' => $this->assignee?->toArray(),
-            'closed_by' => $this->closedBy?->toArray(),
+            'creator' => $this->creator->toArray(),
         ];
     }
 
