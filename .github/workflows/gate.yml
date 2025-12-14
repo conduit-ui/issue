@@ -20,3 +20,4 @@ jobs:
           check: certify
           coverage-threshold: 50
           github-token: ${{ secrets.GITHUB_TOKEN }}
+
