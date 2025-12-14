@@ -215,3 +215,4 @@ Managing issues across 100+ repositories? Contact [jordan@partridge.rocks](mailt
 ## License
 
 MIT License. See [LICENSE](LICENSE.md) for details.
+
