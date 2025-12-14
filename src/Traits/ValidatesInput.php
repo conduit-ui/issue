@@ -102,6 +102,10 @@ trait ValidatesInput
 
         $trimmed = trim($value);
 
+        if ($trimmed === '') {
+            throw new InvalidArgumentException("{$field} cannot be empty");
+        }
+
         if (strlen($trimmed) > $maxLength) {
             throw new InvalidArgumentException("{$field} cannot exceed {$maxLength} characters");
         }
@@ -188,5 +192,90 @@ trait ValidatesInput
         }
 
         return $milestone;
+    }
+
+    protected function validateMilestoneNumber(int $milestoneNumber): void
+    {
+        if ($milestoneNumber < 1) {
+            throw new InvalidArgumentException('Milestone number must be positive');
+        }
+    }
+
+    protected function validateCommentId(int $commentId): void
+    {
+        if ($commentId < 1) {
+            throw new InvalidArgumentException('Comment ID must be positive');
+        }
+    }
+
+    protected function validateNotEmpty(string $value, string $field): void
+    {
+        if (trim($value) === '') {
+            throw new InvalidArgumentException("{$field} cannot be empty");
+        }
+    }
+
+    protected function validateMilestoneData(array $data): array
+    {
+        $sanitized = [];
+
+        if (isset($data['title'])) {
+            $sanitized['title'] = $this->sanitizeString($data['title'], 'title', 256);
+        }
+
+        if (array_key_exists('description', $data)) {
+            if ($data['description'] === null) {
+                $sanitized['description'] = null;
+            } else {
+                $sanitized['description'] = $this->sanitizeString($data['description'], 'description', 65536);
+            }
+        }
+
+        if (isset($data['state'])) {
+            $this->validateMilestoneState($data['state']);
+            $sanitized['state'] = $data['state'];
+        }
+
+        if (array_key_exists('due_on', $data)) {
+            $sanitized['due_on'] = $this->validateDueDate($data['due_on']);
+        }
+
+        return $sanitized;
+    }
+
+    private function validateMilestoneState(mixed $state): void
+    {
+        if (! is_string($state)) {
+            throw new InvalidArgumentException('State must be a string');
+        }
+
+        $validStates = ['open', 'closed'];
+
+        if (! in_array($state, $validStates, true)) {
+            throw new InvalidArgumentException('State must be one of: open, closed');
+        }
+    }
+
+    private function validateDueDate(mixed $dueOn): ?string
+    {
+        if ($dueOn === null) {
+            return null;
+        }
+
+        if (! is_string($dueOn)) {
+            throw new InvalidArgumentException('Due date must be a string or null');
+        }
+
+        $trimmed = trim($dueOn);
+
+        if ($trimmed === '') {
+            throw new InvalidArgumentException('Due date cannot be empty');
+        }
+
+        if (! strtotime($trimmed)) {
+            throw new InvalidArgumentException('Due date must be a valid ISO 8601 date string');
+        }
+
+        return $trimmed;
     }
 }
