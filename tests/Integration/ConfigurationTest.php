@@ -34,9 +34,11 @@ describe('Package configuration', function () {
     });
 
     it('uses environment variables for sensitive values', function () {
+        // The token config should match the GITHUB_TOKEN environment variable
+        // (null when not set, or the actual value when set)
         $token = Config::get('github-issues.token');
+        $envToken = env('GITHUB_TOKEN');
 
-        // Token should be null by default (from env)
-        expect($token)->toBeNull();
+        expect($token)->toBe($envToken);
     });
 });
