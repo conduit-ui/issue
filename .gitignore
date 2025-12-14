@@ -50,4 +50,4 @@ temp/
 # Package manager lockfiles (keep for packages)
 # composer.lock - keep this for packages
 package-lock.json
-yarn.lock
+yarn.lock.claude/reviews/
