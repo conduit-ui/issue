@@ -49,3 +49,26 @@ jobs:
 
       - name: Execute tests
         run: vendor/bin/pest --colors=always
+
+  coverage:
+    runs-on: ubuntu-latest
+    name: Coverage
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick
+          coverage: pcov
+
+      - name: Install dependencies
+        run: |
+          composer require "laravel/framework:11.*" "orchestra/testbench:^9.0" --no-interaction --no-update
+          composer update --prefer-stable --prefer-dist --no-interaction
+
+      - name: Execute tests with coverage
+        run: vendor/bin/pest --colors=always --coverage --min=100

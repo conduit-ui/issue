@@ -87,7 +87,7 @@ trait ValidatesInput
             $sanitized['assignees'] = $this->validateAssignees($data['assignees']);
         }
 
-        if (isset($data['milestone'])) {
+        if (array_key_exists('milestone', $data)) {
             $sanitized['milestone'] = $this->validateMilestone($data['milestone']);
         }
 
