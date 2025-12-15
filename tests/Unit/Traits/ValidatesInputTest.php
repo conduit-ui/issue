@@ -33,6 +33,11 @@ class ValidatesInputTestClass
     {
         return $this->validateIssueData($data);
     }
+
+    public function testValidateMilestoneData(array $data): array
+    {
+        return $this->validateMilestoneData($data);
+    }
 }
 
 // Use a helper function to get a fresh validator instance
@@ -262,5 +267,39 @@ describe('ValidatesInput validateIssueData', function () {
         $result = inputValidator()->testValidateIssueData([]);
 
         expect($result)->toBe([]);
+    });
+});
+
+describe('ValidatesInput validateMilestoneData', function () {
+    it('validates milestone with valid data', function () {
+        $result = inputValidator()->testValidateMilestoneData([
+            'title' => 'v1.0',
+            'state' => 'open',
+            'due_on' => '2025-12-31',
+        ]);
+
+        expect($result)->toBe([
+            'title' => 'v1.0',
+            'state' => 'open',
+            'due_on' => '2025-12-31',
+        ]);
+    });
+
+    it('rejects non-string state in milestone', function () {
+        inputValidator()->testValidateMilestoneData(['state' => 123]);
+    })->throws(InvalidArgumentException::class, 'State must be a string');
+
+    it('rejects non-string due_on in milestone', function () {
+        inputValidator()->testValidateMilestoneData(['due_on' => 12345]);
+    })->throws(InvalidArgumentException::class, 'Due date must be a string or null');
+
+    it('rejects empty due_on in milestone', function () {
+        inputValidator()->testValidateMilestoneData(['due_on' => '   ']);
+    })->throws(InvalidArgumentException::class, 'Due date cannot be empty');
+
+    it('accepts null due_on to clear milestone due date', function () {
+        $result = inputValidator()->testValidateMilestoneData(['due_on' => null]);
+
+        expect($result)->toBe(['due_on' => null]);
     });
 });
