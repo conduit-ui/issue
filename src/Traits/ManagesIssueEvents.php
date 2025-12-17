@@ -6,10 +6,12 @@ namespace ConduitUI\Issue\Traits;
 
 use ConduitUI\Issue\Data\IssueEvent;
 use ConduitUI\Issue\Data\TimelineEvent;
+use ConduitUI\Issue\Requests\Events\GetEventRequest;
 use ConduitUI\Issue\Requests\Events\ListIssueEventsRequest;
 use ConduitUI\Issue\Requests\Events\ListIssueTimelineRequest;
 use ConduitUI\Issue\Requests\Events\ListRepositoryIssueEventsRequest;
 use Illuminate\Support\Collection;
+use InvalidArgumentException;
 
 trait ManagesIssueEvents
 {
@@ -76,5 +78,26 @@ trait ManagesIssueEvents
 
         return collect($items)
             ->map(fn (array $data): IssueEvent => IssueEvent::fromArray($data));
+    }
+
+    public function getEvent(string $owner, string $repo, int $eventId): IssueEvent
+    {
+        $this->validateRepository($owner, $repo);
+        $this->validateEventId($eventId);
+
+        $response = $this->connector->send(
+            new GetEventRequest($owner, $repo, $eventId)
+        );
+
+        $this->handleApiResponse($response, $owner, $repo);
+
+        return IssueEvent::fromArray($response->json());
+    }
+
+    protected function validateEventId(int $eventId): void
+    {
+        if ($eventId < 1) {
+            throw new InvalidArgumentException('Event ID must be positive');
+        }
     }
 }

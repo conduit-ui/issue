@@ -180,6 +180,61 @@ describe('ManagesIssueEvents', function () {
         });
     });
 
+    describe('getEvent', function () {
+        it('gets a single event by id', function () {
+            $this->mockClient->addResponse(MockResponse::make(
+                issueEventResponse(['id' => 456789, 'event' => 'labeled'])
+            ));
+
+            $event = $this->service->getEvent('owner', 'repo', 456789);
+
+            expect($event)->toBeInstanceOf(IssueEvent::class)
+                ->and($event->id)->toBe(456789)
+                ->and($event->event)->toBe('labeled');
+        });
+
+        it('includes actor information', function () {
+            $this->mockClient->addResponse(MockResponse::make(
+                issueEventResponse(['id' => 123, 'event' => 'assigned', 'label' => null])
+            ));
+
+            $event = $this->service->getEvent('owner', 'repo', 123);
+
+            expect($event->actor)->not->toBeNull()
+                ->and($event->actor->login)->toBe('testuser');
+        });
+
+        it('validates repository', function () {
+            expect(fn () => $this->service->getEvent('', 'repo', 123))
+                ->toThrow(InvalidArgumentException::class, 'Owner cannot be empty');
+        });
+
+        it('validates event id', function () {
+            expect(fn () => $this->service->getEvent('owner', 'repo', 0))
+                ->toThrow(InvalidArgumentException::class, 'Event ID must be positive');
+        });
+
+        it('handles event not found', function () {
+            $this->mockClient->addResponse(MockResponse::make(
+                ['message' => 'Not Found'],
+                404
+            ));
+
+            expect(fn () => $this->service->getEvent('owner', 'nonexistent', 123))
+                ->toThrow(RepositoryNotFoundException::class);
+        });
+
+        it('handles API errors', function () {
+            $this->mockClient->addResponse(MockResponse::make(
+                ['message' => 'Internal Server Error'],
+                500
+            ));
+
+            expect(fn () => $this->service->getEvent('owner', 'repo', 123))
+                ->toThrow(Exception::class);
+        });
+    });
+
     describe('listRepositoryEvents', function () {
         it('lists repository issue events', function () {
             $this->mockClient->addResponse(MockResponse::make([

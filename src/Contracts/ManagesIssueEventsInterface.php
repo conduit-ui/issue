@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ConduitUI\Issue\Contracts;
 
+use ConduitUI\Issue\Data\IssueEvent;
 use Illuminate\Support\Collection;
 
 interface ManagesIssueEventsInterface
@@ -22,4 +23,6 @@ interface ManagesIssueEventsInterface
      * @return \Illuminate\Support\Collection<int, \ConduitUI\Issue\Data\IssueEvent>
      */
     public function listRepositoryEvents(string $owner, string $repo, array $filters = []): Collection;
+
+    public function getEvent(string $owner, string $repo, int $eventId): IssueEvent;
 }

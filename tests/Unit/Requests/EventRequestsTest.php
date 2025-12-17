@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use ConduitUI\Issue\Requests\Events\GetEventRequest;
 use ConduitUI\Issue\Requests\Events\ListIssueEventsRequest;
 use ConduitUI\Issue\Requests\Events\ListIssueTimelineRequest;
 use ConduitUI\Issue\Requests\Events\ListRepositoryIssueEventsRequest;
@@ -135,6 +136,30 @@ describe('Event Requests', function () {
             $query = $method->invoke($request);
 
             expect($query)->toBe([]);
+        });
+    });
+
+    describe('GetEventRequest', function () {
+        it('has correct HTTP method', function () {
+            $request = new GetEventRequest('owner', 'repo', 123456);
+
+            $reflection = new ReflectionClass($request);
+            $property = $reflection->getProperty('method');
+            $property->setAccessible(true);
+
+            expect($property->getValue($request))->toBe(Method::GET);
+        });
+
+        it('resolves correct endpoint', function () {
+            $request = new GetEventRequest('owner', 'repo', 789);
+
+            expect($request->resolveEndpoint())->toBe('/repos/owner/repo/issues/events/789');
+        });
+
+        it('uses correct event id in endpoint', function () {
+            $request = new GetEventRequest('testowner', 'testrepo', 999999);
+
+            expect($request->resolveEndpoint())->toBe('/repos/testowner/testrepo/issues/events/999999');
         });
     });
 });
