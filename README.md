@@ -94,6 +94,24 @@ $issue->comment('Thanks for reporting! Our team will investigate.');
 $comments = $issue->comments();
 ```
 
+**Comment Reactions**
+```php
+// React to a comment
+$comment = $issue->comments()->first();
+$comment->react('+1');
+
+// List reactions on a comment
+$reactions = $comment->reactions();
+
+// Filter by type
+$thumbsUp = $reactions->filter(fn($r) => $r->isThumbsUp());
+
+// Remove a reaction
+$comment->unreact($reactionId);
+```
+
+Available reaction types: `+1`, `-1`, `laugh`, `confused`, `heart`, `hooray`, `rocket`, `eyes`
+
 **Lock & Unlock**
 ```php
 // Lock heated discussions
