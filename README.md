@@ -94,6 +94,25 @@ $issue->comment('Thanks for reporting! Our team will investigate.');
 $comments = $issue->comments();
 ```
 
+**Comment Reactions**
+```php
+use ConduitUI\Issue\Facades\Issue;
+
+// Add a reaction to a comment
+$reaction = Issue::createCommentReaction('owner', 'repo', $commentId, '+1');
+
+// List all reactions on a comment
+$reactions = Issue::listCommentReactions('owner', 'repo', $commentId);
+
+// Filter reactions by type
+$thumbsUp = $reactions->filter(fn($r) => $r->isThumbsUp());
+
+// Remove a reaction
+Issue::deleteCommentReaction('owner', 'repo', $commentId, $reactionId);
+```
+
+Available reaction types: `+1`, `-1`, `laugh`, `confused`, `heart`, `hooray`, `rocket`, `eyes`
+
 **Lock & Unlock**
 ```php
 // Lock heated discussions
