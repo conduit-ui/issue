@@ -35,7 +35,7 @@ trait ManagesIssueComments
         $items = $response->json();
 
         return collect($items)
-            ->map(fn (array $data): Comment => Comment::fromArray($data));
+            ->map(fn (array $data): Comment => Comment::fromArray($data)->withContext($owner, $repo, $this));
     }
 
     public function getComment(string $owner, string $repo, int $commentId): Comment
@@ -49,7 +49,7 @@ trait ManagesIssueComments
 
         $this->handleApiResponse($response, $owner, $repo);
 
-        return Comment::fromArray($response->json());
+        return Comment::fromArray($response->json())->withContext($owner, $repo, $this);
     }
 
     public function createComment(string $owner, string $repo, int $issueNumber, string $body): Comment
@@ -64,7 +64,7 @@ trait ManagesIssueComments
 
         $this->handleApiResponse($response, $owner, $repo, $issueNumber);
 
-        return Comment::fromArray($response->json());
+        return Comment::fromArray($response->json())->withContext($owner, $repo, $this);
     }
 
     public function updateComment(string $owner, string $repo, int $commentId, string $body): Comment
@@ -79,7 +79,7 @@ trait ManagesIssueComments
 
         $this->handleApiResponse($response, $owner, $repo);
 
-        return Comment::fromArray($response->json());
+        return Comment::fromArray($response->json())->withContext($owner, $repo, $this);
     }
 
     public function deleteComment(string $owner, string $repo, int $commentId): bool

@@ -10,9 +10,19 @@ arch('exceptions extend base exception')
     ->expect('ConduitUI\Issue\Exceptions')
     ->toExtend(Exception::class);
 
-arch('data classes are readonly')
-    ->expect('ConduitUI\Issue\Data')
+arch('readonly data classes')
+    ->expect([
+        'ConduitUI\Issue\Data\Issue',
+        'ConduitUI\Issue\Data\IssueEvent',
+        'ConduitUI\Issue\Data\Label',
+        'ConduitUI\Issue\Data\Milestone',
+        'ConduitUI\Issue\Data\Reaction',
+        'ConduitUI\Issue\Data\TimelineEvent',
+        'ConduitUI\Issue\Data\User',
+    ])
     ->toBeReadonly();
+
+// Comment is not readonly - it needs mutable context for fluent API (react, reactions, unreact)
 
 arch('traits are traits')
     ->expect('ConduitUI\Issue\Traits')
