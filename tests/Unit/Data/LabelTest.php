@@ -11,6 +11,7 @@ describe('Label', function () {
             'name' => 'bug',
             'color' => 'fc2929',
             'description' => 'Something is broken',
+            'default' => false,
         ];
 
         $label = Label::fromArray($data);
@@ -19,6 +20,7 @@ describe('Label', function () {
         expect($label->name)->toBe('bug');
         expect($label->color)->toBe('fc2929');
         expect($label->description)->toBe('Something is broken');
+        expect($label->default)->toBeFalse();
     });
 
     it('can create label from array with null description', function () {
@@ -67,5 +69,38 @@ describe('Label', function () {
         expect($array['name'])->toBe('enhancement');
         expect($array['color'])->toBe('84b6eb');
         expect($array['description'])->toBeNull();
+    });
+
+    it('can get hex color with hash', function () {
+        $label = new Label(
+            id: 123,
+            name: 'bug',
+            color: 'fc2929',
+            description: null,
+        );
+
+        expect($label->hexColor())->toBe('#fc2929');
+    });
+
+    it('can detect light colors', function () {
+        $lightLabel = new Label(
+            id: 123,
+            name: 'light',
+            color: 'ffffff',
+            description: null,
+        );
+
+        expect($lightLabel->isLightColor())->toBeTrue();
+    });
+
+    it('can detect dark colors', function () {
+        $darkLabel = new Label(
+            id: 123,
+            name: 'dark',
+            color: '000000',
+            description: null,
+        );
+
+        expect($darkLabel->isLightColor())->toBeFalse();
     });
 });
