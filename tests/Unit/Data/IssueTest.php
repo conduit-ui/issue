@@ -40,6 +40,8 @@ describe('Issue', function () {
             'updated_at' => '2023-01-02T12:00:00Z',
             'closed_at' => null,
             'html_url' => 'https://github.com/owner/repo/issues/1',
+            'url' => 'https://api.github.com/repos/owner/repo/issues/1',
+            'active_lock_reason' => null,
             'user' => [
                 'id' => 101,
                 'login' => 'author',
@@ -96,6 +98,8 @@ describe('Issue', function () {
             updatedAt: new DateTime('2023-01-02T12:00:00Z'),
             closedAt: null,
             htmlUrl: 'https://github.com/owner/repo/issues/1',
+            apiUrl: 'https://api.github.com/repos/owner/repo/issues/1',
+            activeLockReason: null,
             user: $user,
             assignee: $assignee,
             closedBy: null,
@@ -129,6 +133,8 @@ describe('Issue', function () {
             updatedAt: new DateTime,
             closedAt: null,
             htmlUrl: 'https://github.com/owner/repo/issues/1',
+            apiUrl: 'https://api.github.com/repos/owner/repo/issues/1',
+            activeLockReason: null,
             user: new User(101, 'author', 'https://github.com/author.png', 'https://github.com/author', 'User'),
         );
 
@@ -152,10 +158,94 @@ describe('Issue', function () {
             updatedAt: new DateTime,
             closedAt: new DateTime,
             htmlUrl: 'https://github.com/owner/repo/issues/1',
+            apiUrl: 'https://api.github.com/repos/owner/repo/issues/1',
+            activeLockReason: null,
             user: new User(101, 'author', 'https://github.com/author.png', 'https://github.com/author', 'User'),
         );
 
         expect($issue->isOpen())->toBeFalse();
         expect($issue->isClosed())->toBeTrue();
+    });
+
+    it('can check if issue is locked', function () {
+        $issue = new Issue(
+            id: 123,
+            number: 1,
+            title: 'Test Issue',
+            body: 'This is a test issue',
+            state: 'open',
+            locked: true,
+            assignees: [],
+            labels: [],
+            milestone: null,
+            comments: 0,
+            createdAt: new DateTime,
+            updatedAt: new DateTime,
+            closedAt: null,
+            htmlUrl: 'https://github.com/owner/repo/issues/1',
+            apiUrl: 'https://api.github.com/repos/owner/repo/issues/1',
+            activeLockReason: 'too heated',
+            user: new User(101, 'author', 'https://github.com/author.png', 'https://github.com/author', 'User'),
+        );
+
+        expect($issue->isLocked())->toBeTrue();
+    });
+
+    it('can check if issue has label', function () {
+        $label1 = new Label(1, 'bug', 'fc2929', null);
+        $label2 = new Label(2, 'urgent', 'ff0000', null);
+
+        $issue = new Issue(
+            id: 123,
+            number: 1,
+            title: 'Test Issue',
+            body: 'This is a test issue',
+            state: 'open',
+            locked: false,
+            assignees: [],
+            labels: [$label1, $label2],
+            milestone: null,
+            comments: 0,
+            createdAt: new DateTime,
+            updatedAt: new DateTime,
+            closedAt: null,
+            htmlUrl: 'https://github.com/owner/repo/issues/1',
+            apiUrl: 'https://api.github.com/repos/owner/repo/issues/1',
+            activeLockReason: null,
+            user: new User(101, 'author', 'https://github.com/author.png', 'https://github.com/author', 'User'),
+        );
+
+        expect($issue->hasLabel('bug'))->toBeTrue();
+        expect($issue->hasLabel('urgent'))->toBeTrue();
+        expect($issue->hasLabel('enhancement'))->toBeFalse();
+    });
+
+    it('can check if issue is assigned to user', function () {
+        $user1 = new User(1, 'developer1', 'https://github.com/developer1.png', 'https://github.com/developer1', 'User');
+        $user2 = new User(2, 'developer2', 'https://github.com/developer2.png', 'https://github.com/developer2', 'User');
+
+        $issue = new Issue(
+            id: 123,
+            number: 1,
+            title: 'Test Issue',
+            body: 'This is a test issue',
+            state: 'open',
+            locked: false,
+            assignees: [$user1, $user2],
+            labels: [],
+            milestone: null,
+            comments: 0,
+            createdAt: new DateTime,
+            updatedAt: new DateTime,
+            closedAt: null,
+            htmlUrl: 'https://github.com/owner/repo/issues/1',
+            apiUrl: 'https://api.github.com/repos/owner/repo/issues/1',
+            activeLockReason: null,
+            user: new User(101, 'author', 'https://github.com/author.png', 'https://github.com/author', 'User'),
+        );
+
+        expect($issue->isAssignedTo('developer1'))->toBeTrue();
+        expect($issue->isAssignedTo('developer2'))->toBeTrue();
+        expect($issue->isAssignedTo('developer3'))->toBeFalse();
     });
 });

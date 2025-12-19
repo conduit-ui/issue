@@ -8,6 +8,7 @@ use ConduitUI\Issue\Services\IssuesService;
 use Illuminate\Support\Facades\Facade;
 
 /**
+ * @method static \ConduitUI\Issue\Services\IssueInstance find(string $fullName, int $number)
  * @method static \Illuminate\Support\Collection listIssues(string $owner, string $repo, array $filters = [])
  * @method static \ConduitUI\GithubIssues\Data\Issue getIssue(string $owner, string $repo, int $issueNumber)
  * @method static \ConduitUI\GithubIssues\Data\Issue createIssue(string $owner, string $repo, array $data)
