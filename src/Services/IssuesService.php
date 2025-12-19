@@ -27,4 +27,12 @@ class IssuesService implements IssuesServiceInterface
     public function __construct(
         private readonly Connector $connector
     ) {}
+
+    /**
+     * Find and interact with a specific issue
+     */
+    public function find(string $fullName, int $number): IssueInstance
+    {
+        return new IssueInstance($this->connector, $fullName, $number);
+    }
 }
