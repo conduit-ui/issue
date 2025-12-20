@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace ConduitUI\Issue\Services;
 
 use ConduitUi\GitHubConnector\Connector;
+use ConduitUI\Issue\Contracts\IssueQueryInterface;
 use ConduitUI\Issue\Data\Issue;
 use ConduitUI\Issue\Requests\Issues\ListIssuesRequest;
 use DateTime;
+use DateTimeInterface;
 use Illuminate\Support\Collection;
 
-class IssueQuery
+class IssueQuery implements IssueQueryInterface
 {
     /**
      * @var array<string, mixed>
@@ -24,9 +26,9 @@ class IssueQuery
     ) {}
 
     /**
-     * Filter issues by state.
+     * Filter issues by state (interface method).
      */
-    public function whereState(string $state): self
+    public function state(string $state): self
     {
         $this->filters['state'] = $state;
 
@@ -34,11 +36,19 @@ class IssueQuery
     }
 
     /**
+     * Filter issues by state (alias for backward compatibility).
+     */
+    public function whereState(string $state): self
+    {
+        return $this->state($state);
+    }
+
+    /**
      * Filter for open issues.
      */
     public function whereOpen(): self
     {
-        return $this->whereState('open');
+        return $this->state('open');
     }
 
     /**
@@ -46,37 +56,59 @@ class IssueQuery
      */
     public function whereClosed(): self
     {
-        return $this->whereState('closed');
+        return $this->state('closed');
     }
 
     /**
-     * Filter by a single label.
+     * Filter issues by labels (interface method).
+     *
+     * @param  array<string>|string  $labels
+     */
+    public function labels(array|string $labels): self
+    {
+        if (is_array($labels)) {
+            $this->filters['labels'] = implode(',', $labels);
+        } else {
+            $this->filters['labels'] = $labels;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Filter by a single label (alias for backward compatibility).
      */
     public function whereLabel(string $label): self
     {
-        $this->filters['labels'] = $label;
-
-        return $this;
+        return $this->labels($label);
     }
 
     /**
-     * Filter by multiple labels (comma-separated).
+     * Filter by multiple labels (alias for backward compatibility).
+     *
+     * @param  array<string>  $labels
      */
     public function whereLabels(array $labels): self
     {
-        $this->filters['labels'] = implode(',', $labels);
-
-        return $this;
+        return $this->labels($labels);
     }
 
     /**
-     * Filter by assignee.
+     * Filter issues by assignee username (interface method).
      */
-    public function assignedTo(string $username): self
+    public function assignee(string $username): self
     {
         $this->filters['assignee'] = $username;
 
         return $this;
+    }
+
+    /**
+     * Filter by assignee (alias for backward compatibility).
+     */
+    public function assignedTo(string $username): self
+    {
+        return $this->assignee($username);
     }
 
     /**
@@ -90,9 +122,9 @@ class IssueQuery
     }
 
     /**
-     * Filter by creator.
+     * Filter issues by creator username (interface method).
      */
-    public function createdBy(string $username): self
+    public function creator(string $username): self
     {
         $this->filters['creator'] = $username;
 
@@ -100,9 +132,17 @@ class IssueQuery
     }
 
     /**
-     * Filter by mentioned user.
+     * Filter by creator (alias for backward compatibility).
      */
-    public function mentioning(string $username): self
+    public function createdBy(string $username): self
+    {
+        return $this->creator($username);
+    }
+
+    /**
+     * Filter issues mentioning a specific user (interface method).
+     */
+    public function mentioned(string $username): self
     {
         $this->filters['mentioned'] = $username;
 
@@ -110,13 +150,29 @@ class IssueQuery
     }
 
     /**
-     * Filter by created after date.
+     * Filter by mentioned user (alias for backward compatibility).
      */
-    public function createdAfter(string|DateTime $date): self
+    public function mentioning(string $username): self
+    {
+        return $this->mentioned($username);
+    }
+
+    /**
+     * Filter issues updated since a given date (interface method).
+     */
+    public function since(string|DateTimeInterface $date): self
     {
         $this->filters['since'] = $this->formatDate($date);
 
         return $this;
+    }
+
+    /**
+     * Filter by created after date (alias for backward compatibility).
+     */
+    public function createdAfter(string|DateTime $date): self
+    {
+        return $this->since($date);
     }
 
     /**
@@ -142,14 +198,31 @@ class IssueQuery
     }
 
     /**
-     * Sort by field and direction.
+     * Sort issues by created, updated, or comments (interface method).
      */
-    public function orderBy(string $field, string $direction = 'asc'): self
+    public function sort(string $field): self
     {
         $this->filters['sort'] = $field;
+
+        return $this;
+    }
+
+    /**
+     * Set sort direction (asc or desc) (interface method).
+     */
+    public function direction(string $direction): self
+    {
         $this->filters['direction'] = $direction;
 
         return $this;
+    }
+
+    /**
+     * Sort by field and direction (convenience method).
+     */
+    public function orderBy(string $field, string $direction = 'asc'): self
+    {
+        return $this->sort($field)->direction($direction);
     }
 
     /**
@@ -252,9 +325,9 @@ class IssueQuery
     /**
      * Format date to ISO 8601 format.
      */
-    protected function formatDate(string|DateTime $date): string
+    protected function formatDate(string|DateTimeInterface $date): string
     {
-        if ($date instanceof DateTime) {
+        if ($date instanceof DateTimeInterface) {
             return $date->format('c');
         }
 
