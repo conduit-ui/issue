@@ -293,4 +293,123 @@ describe('IssueQuery', function () {
             expect($this->query->exists())->toBeFalse();
         });
     });
+
+    describe('Interface Method Compliance', function () {
+        it('supports state() method from interface', function () {
+            $this->mockClient->addResponse(MockResponse::make([
+                fullIssueResponse(['number' => 1, 'state' => 'open']),
+            ]));
+
+            $issues = $this->query->state('open')->get();
+
+            expect($issues)->toHaveCount(1)
+                ->and($issues->first()->state)->toBe('open');
+        });
+
+        it('supports labels() with array from interface', function () {
+            $this->mockClient->addResponse(MockResponse::make([
+                fullIssueResponse(['number' => 1, 'labels' => [
+                    ['id' => 1, 'name' => 'bug', 'color' => 'ff0000', 'description' => 'Bug'],
+                    ['id' => 2, 'name' => 'urgent', 'color' => '00ff00', 'description' => 'Urgent'],
+                ]]),
+            ]));
+
+            $issues = $this->query->labels(['bug', 'urgent'])->get();
+
+            expect($issues)->toHaveCount(1);
+        });
+
+        it('supports labels() with string from interface', function () {
+            $this->mockClient->addResponse(MockResponse::make([
+                fullIssueResponse(['number' => 1, 'labels' => [
+                    ['id' => 1, 'name' => 'bug', 'color' => 'ff0000', 'description' => 'Bug'],
+                ]]),
+            ]));
+
+            $issues = $this->query->labels('bug')->get();
+
+            expect($issues)->toHaveCount(1);
+        });
+
+        it('supports assignee() method from interface', function () {
+            $this->mockClient->addResponse(MockResponse::make([
+                fullIssueResponse(['number' => 1, 'assignee' => ['id' => 1, 'login' => 'johndoe', 'avatar_url' => 'https://example.com/avatar.png', 'html_url' => 'https://github.com/johndoe', 'type' => 'User']]),
+            ]));
+
+            $issues = $this->query->assignee('johndoe')->get();
+
+            expect($issues)->toHaveCount(1);
+        });
+
+        it('supports creator() method from interface', function () {
+            $this->mockClient->addResponse(MockResponse::make([
+                fullIssueResponse(['number' => 1, 'user' => ['id' => 1, 'login' => 'janedoe', 'avatar_url' => 'https://example.com/avatar.png', 'html_url' => 'https://github.com/janedoe', 'type' => 'User']]),
+            ]));
+
+            $issues = $this->query->creator('janedoe')->get();
+
+            expect($issues)->toHaveCount(1);
+        });
+
+        it('supports mentioned() method from interface', function () {
+            $this->mockClient->addResponse(MockResponse::make([
+                fullIssueResponse(['number' => 1]),
+            ]));
+
+            $issues = $this->query->mentioned('johndoe')->get();
+
+            expect($issues)->toHaveCount(1);
+        });
+
+        it('supports since() method from interface', function () {
+            $this->mockClient->addResponse(MockResponse::make([
+                fullIssueResponse(['number' => 1, 'created_at' => '2024-01-15T00:00:00Z']),
+            ]));
+
+            $issues = $this->query->since('2024-01-01')->get();
+
+            expect($issues)->toHaveCount(1);
+        });
+
+        it('supports sort() method from interface', function () {
+            $this->mockClient->addResponse(MockResponse::make([
+                fullIssueResponse(['number' => 1, 'created_at' => '2024-01-01T00:00:00Z']),
+                fullIssueResponse(['number' => 2, 'created_at' => '2024-01-02T00:00:00Z']),
+            ]));
+
+            $issues = $this->query->sort('created')->get();
+
+            expect($issues)->toHaveCount(2);
+        });
+
+        it('supports direction() method from interface', function () {
+            $this->mockClient->addResponse(MockResponse::make([
+                fullIssueResponse(['number' => 1]),
+                fullIssueResponse(['number' => 2]),
+            ]));
+
+            $issues = $this->query->sort('created')->direction('desc')->get();
+
+            expect($issues)->toHaveCount(2);
+        });
+
+        it('supports fluent chaining with interface methods', function () {
+            $this->mockClient->addResponse(MockResponse::make([
+                fullIssueResponse(['number' => 1, 'state' => 'open', 'labels' => [['id' => 1, 'name' => 'bug', 'color' => 'ff0000', 'description' => 'Bug']]]),
+            ]));
+
+            $issues = $this->query
+                ->state('open')
+                ->labels(['bug'])
+                ->assignee('johndoe')
+                ->creator('janedoe')
+                ->sort('created')
+                ->direction('desc')
+                ->perPage(10)
+                ->page(1)
+                ->get();
+
+            expect($issues)->toHaveCount(1);
+        });
+    });
 });
