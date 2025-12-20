@@ -5,6 +5,7 @@ declare(strict_types=1);
 use ConduitUi\GitHubConnector\Connector;
 use ConduitUI\Issue\Data\Issue;
 use ConduitUI\Issue\Services\IssueQuery;
+use ConduitUI\Issue\Support\IssueCollection;
 use Saloon\Http\Faking\MockClient;
 use Saloon\Http\Faking\MockResponse;
 
@@ -244,7 +245,7 @@ describe('IssueQuery', function () {
 
             $issues = $this->query->get();
 
-            expect($issues)->toBeInstanceOf(\Illuminate\Support\Collection::class)
+            expect($issues)->toBeInstanceOf(IssueCollection::class)
                 ->and($issues)->toHaveCount(2);
         });
 

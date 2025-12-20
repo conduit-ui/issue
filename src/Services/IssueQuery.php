@@ -7,8 +7,8 @@ namespace ConduitUI\Issue\Services;
 use ConduitUi\GitHubConnector\Connector;
 use ConduitUI\Issue\Data\Issue;
 use ConduitUI\Issue\Requests\Issues\ListIssuesRequest;
+use ConduitUI\Issue\Support\IssueCollection;
 use DateTime;
-use Illuminate\Support\Collection;
 
 class IssueQuery
 {
@@ -190,10 +190,8 @@ class IssueQuery
 
     /**
      * Execute the query and get all issues.
-     *
-     * @return \Illuminate\Support\Collection<int, \ConduitUI\Issue\Data\Issue>
      */
-    public function get(): Collection
+    public function get(): IssueCollection
     {
         // Remove client-side filters before sending request
         $apiFilters = $this->filters;
@@ -222,7 +220,7 @@ class IssueQuery
             $collection = $collection->filter(fn (Issue $issue): bool => $issue->updatedAt <= $updatedBefore);
         }
 
-        return $collection;
+        return new IssueCollection($collection);
     }
 
     /**
