@@ -13,9 +13,13 @@ jobs:
     permissions:
       contents: write
       checks: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
-      - uses: synapse-sentinel/gate@v1
+
+      - name: 🛡️ Run Gate Certification
+        id: gate
+        uses: synapse-sentinel/gate@v1
         with:
           check: certify
           coverage-threshold: 100
@@ -23,3 +27,18 @@ jobs:
           merge-method: squash
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: 🧠 Send Results to Prefrontal Cortex
+        if: always() && github.event_name == 'pull_request'
+        run: |
+          curl -X POST "${{ secrets.PREFRONTAL_WEBHOOK_URL }}" \
+            -H "Authorization: Bearer ${{ secrets.PREFRONTAL_API_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"repo\": \"${{ github.repository }}\",
+              \"pr\": ${{ github.event.pull_request.number }},
+              \"gate_status\": \"${{ steps.gate.outcome }}\",
+              \"sha\": \"${{ github.event.pull_request.head.sha }}\",
+              \"coverage\": \"${{ steps.gate.outputs.coverage || 'unknown' }}\",
+              \"tests\": \"${{ steps.gate.outputs.tests || 'unknown' }}\",
+              \"linting\": \"${{ steps.gate.outputs.linting || 'unknown' }}\"
+            }"
