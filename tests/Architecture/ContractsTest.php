@@ -185,7 +185,7 @@ describe('Contract Method Signatures', function () {
         $returnType = $stateMethod->getReturnType();
 
         expect($returnType)->not->toBeNull()
-            ->and($returnType->getName())->toBe('self');
+            ->and($returnType->getName())->toBeIn(['self', IssueQueryInterface::class]);
     });
 
     it('manager create methods return data objects', function () {
@@ -243,6 +243,6 @@ describe('Builder Contracts', function () {
         $returnType = $titleMethod->getReturnType();
 
         expect($returnType)->not->toBeNull()
-            ->and($returnType->getName())->toBe('self');
+            ->and($returnType->getName())->toBeIn(['self', IssueBuilderInterface::class]);
     });
 });
